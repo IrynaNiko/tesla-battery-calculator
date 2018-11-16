@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Header from './components/Header/Header';
-import Car from './components/Car/Car';
 import Battery from './containers/Battery';
 
 const counterDefaultVal = {

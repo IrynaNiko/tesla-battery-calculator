@@ -3,7 +3,9 @@ import './Battery.css';
 import Car from '../components/Car/Car';
 import Stats from '../components/Stats/Stats';
 import Notice from '../components/Notice/Notice';
+import Climate from '../components/Climate/Climate';
 import Counter from '../components/Counter/Counter';
+import Wheels from '../components/Wheels/Wheels';
 import { getModelData } from '../services/BatteryService';
 
 class Battery extends React.Component {
@@ -15,9 +17,11 @@ class Battery extends React.Component {
         this.increment = this.increment.bind(this);
         this.decrement = this.decrement.bind(this);
         this.updateCounterState = this.updateCounterState.bind(this);
+        this.handleChangeClimate = this.handleChangeClimate.bind(this);
+        this.handleChangeWheels = this.handleChangeWheels.bind(this);
         this.state = {
-                carstats: [],
-                config: {
+            carstats: [],
+            config: {
                 speed: 55,
                 temperature: 20,
                 climate: true,
@@ -94,16 +98,30 @@ class Battery extends React.Component {
         }
     }
     
+    // handle aircon & heating click event handler
+    handleChangeClimate() {
+        const config = {...this.state.config};
+        config['climate'] = !this.state.config.climate;
+        this.setState({ config });
+    }
+
+    handleChangeWheels(size) {
+        const config = {...this.state.config};
+        config['wheels'] = size;
+        this.setState({ config });
+    }
+
     componentDidMount() {
         this.statsUpdate(); 
     }
       
     render() {	
+        const { config, carstats } = this.state;
         return (
           <form className="tesla-battery">
             <h1>Range Per Charge</h1>
-            <Car wheelsize={this.state.config.wheels} />
-            <Stats carstats={this.state.carstats} />
+            <Car wheelsize={config.wheels} />
+            <Stats carstats={carstats} />
             <div className="tesla-controls cf">
               <Counter
                 currentValue={this.state.config.speed}
@@ -113,12 +131,21 @@ class Battery extends React.Component {
               />
               <div className="tesla-climate-container cf">
                 <Counter
-                  currentValue={this.state.config.temperature}
-                  initValues={this.props.counterDefaultVal.temperature}
-                  increment={this.increment}
-                  decrement={this.decrement}
+                    currentValue={this.state.config.temperature}
+                    initValues={this.props.counterDefaultVal.temperature}
+                    increment={this.increment}
+                    decrement={this.decrement}
                 />
+                <Climate
+                    value={this.state.config.climate}
+                    limit={this.state.config.temperature > 10}
+                    handleChangeClimate={this.handleChangeClimate}
+                /> 
               </div>
+              <Wheels
+                value={this.state.config.wheels}
+                handleChangeWheels={this.handleChangeWheels}
+               />
             </div>
             <Notice />
         </form>
